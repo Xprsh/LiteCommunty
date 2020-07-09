@@ -9,16 +9,23 @@ import org.springframework.web.bind.annotation.RequestParam;
 import top.youmunan.communty.Provider.GitHubProvider;
 import top.youmunan.communty.dto.AccessTokenDTO;
 import top.youmunan.communty.dto.GitHubUser;
+import top.youmunan.communty.mapper.UserMapper;
+import top.youmunan.communty.model.User;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.util.UUID;
 
 @Controller
 public class AuthorizeController {
 
     @Autowired
     GitHubProvider gitHubProvider;
+
+    @Autowired
+    UserMapper userMapper;
 
     @Value("${github.redirect.uri}")
     private String redirectId;
@@ -45,9 +52,20 @@ public class AuthorizeController {
 
         if (gitHubUser != null && gitHubUser.getLogin() != null) {
             // 登录成功
-            HttpSession session = request.getSession();
-            session.setAttribute("user", gitHubUser);
+            User user = new User();
+            user.setToken(UUID.randomUUID().toString());
+            user.setName(gitHubUser.getLogin());
+            user.setAccountId(String.valueOf(gitHubUser.getId()));
+            user.setGmtCreate(System.currentTimeMillis());
+            user.setGmtModified(user.getGmtCreate());
+            user.setAvatarUrl(gitHubUser.getAvatarUrl());
+            userMapper.insert(user);
+//            HttpSession session = request.getSession();
+//            session.setAttribute("user", gitHubUser);
+            // 使用cookie
             // 重定向，改变地址栏地址
+            Cookie cookie = new Cookie("token", user.getToken());
+            response.addCookie(cookie);
             return "redirect:/";
         } else {
             // 登陆失败
