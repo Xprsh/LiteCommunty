@@ -1,9 +1,6 @@
 package top.youmunan.communty.mapper;
 
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
 import top.youmunan.communty.model.User;
 @Mapper
 public interface UserMapper {
@@ -15,4 +12,10 @@ public interface UserMapper {
 
     @Select("Select * from `user` where id = #{id}")
     User findById(@Param("id") Integer id);
+
+    @Select("Select * from `user` where account_id = #{id}")
+    User findByAccountId(@Param("id") Integer id);
+
+    @Update("Update `user` set name=#{name},token=#{token},gmt_modified=#{gmtModified},avatar_url=#{avatarUrl} where account_id=#{accountId}")
+    void updateUser(User user);
 }

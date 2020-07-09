@@ -35,25 +35,10 @@ public class IndexController {
                         @RequestParam(name = "page", defaultValue = "1", required = false) Integer page,
                         @RequestParam(name = "size", defaultValue = "5", required = false) Integer size
     ) {
-        Cookie[] cookies = request.getCookies();
-        String token = null;
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if (cookie.getName().equals("token")) {
-                    token = cookie.getValue();
-                    break;
-                }
-            }
 
-            User user = userMapper.findByToken(token);
-            if (user != null) {
-                HttpSession session = request.getSession();
-                session.setAttribute("user", user);
-            }
 
-            PageDTO questions = questionService.list(page, size);
-            model.addAttribute("questions", questions);
-        }
+        PageDTO questions = questionService.list(page, size);
+        model.addAttribute("questions", questions);
 
         return "index";
     }

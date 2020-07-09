@@ -15,7 +15,6 @@ import top.youmunan.communty.model.User;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.util.UUID;
 
 @Controller
@@ -51,15 +50,29 @@ public class AuthorizeController {
         System.out.println(gitHubUser);
 
         if (gitHubUser != null && gitHubUser.getLogin() != null) {
+            User user = null;
             // 登录成功
-            User user = new User();
-            user.setToken(UUID.randomUUID().toString());
-            user.setName(gitHubUser.getLogin());
-            user.setAccountId(String.valueOf(gitHubUser.getId()));
-            user.setGmtCreate(System.currentTimeMillis());
-            user.setGmtModified(user.getGmtCreate());
-            user.setAvatarUrl(gitHubUser.getAvatarUrl());
-            userMapper.insert(user);
+            if(userMapper.findByAccountId(gitHubUser.getId().intValue()).getName().equals(gitHubUser.getLogin())){
+                // 已存在用户
+                // 更新信息
+                user = userMapper.findByAccountId(gitHubUser.getId().intValue());
+                user.setToken(UUID.randomUUID().toString());
+                user.setName(gitHubUser.getLogin());
+                user.setAccountId(String.valueOf(gitHubUser.getId()));
+                user.setGmtModified(System.currentTimeMillis());
+                user.setAvatarUrl(gitHubUser.getAvatarUrl());
+                userMapper.updateUser(user);
+
+            }else {
+                user = new User();
+                user.setToken(UUID.randomUUID().toString());
+                user.setName(gitHubUser.getLogin());
+                user.setAccountId(String.valueOf(gitHubUser.getId()));
+                user.setGmtCreate(System.currentTimeMillis());
+                user.setGmtModified(user.getGmtCreate());
+                user.setAvatarUrl(gitHubUser.getAvatarUrl());
+                userMapper.insert(user);
+            }
 //            HttpSession session = request.getSession();
 //            session.setAttribute("user", gitHubUser);
             // 使用cookie
