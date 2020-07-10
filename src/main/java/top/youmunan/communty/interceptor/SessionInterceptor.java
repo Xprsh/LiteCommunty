@@ -6,11 +6,13 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 import top.youmunan.communty.mapper.UserMapper;
 import top.youmunan.communty.model.User;
+import top.youmunan.communty.model.UserExample;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.util.List;
 
 
 @Service
@@ -30,11 +32,13 @@ public class SessionInterceptor implements HandlerInterceptor {
                     break;
                 }
             }
-
-            User user = userMapper.findByToken(token);
-            if (user != null) {
+            UserExample userExample = new UserExample();
+            userExample.createCriteria()
+                    .andTokenEqualTo(token);
+            List<User> users = userMapper.selectByExample(userExample);
+            if (users != null && users.size() != 0) {
                 HttpSession session = request.getSession();
-                session.setAttribute("user", user);
+                session.setAttribute("user", users.get(0));
             }
         }
         return true;

@@ -4,14 +4,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import top.youmunan.communty.mapper.QuestionMapper;
-import top.youmunan.communty.mapper.UserMapper;
 import top.youmunan.communty.model.Question;
 import top.youmunan.communty.model.User;
+import top.youmunan.communty.service.QuestionService;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -22,10 +22,23 @@ public class PublishController {
     @Autowired
     QuestionMapper questionMapper;
 
+    @Autowired
+    QuestionService questionService;
+
 
     @GetMapping("/publish")
     public String publish() {
         return "publish";
+    }
+
+    @GetMapping("/publish/{id}")
+    public String edit(@PathVariable(name="id") Integer id, Model model) {
+        Question question = questionMapper.selectByPrimaryKey(id);
+        model.addAttribute("title", question.getTitle());
+        model.addAttribute("detail", question.getDetail());
+        model.addAttribute("tags", question.getTags());
+        model.addAttribute("questionId", question.getId());
+        return "/publish";
     }
 
     @PostMapping("/publish")
@@ -33,6 +46,7 @@ public class PublishController {
             @RequestParam("title") String title,
             @RequestParam("detail") String detail,
             @RequestParam("tags") String tags,
+            @RequestParam(name= "questionId",required = false) Integer questionId,
             HttpServletRequest request,
             HttpServletResponse response,
             Model model
@@ -73,8 +87,10 @@ public class PublishController {
             return "publish";
         }
 
-        question.setCreator(user.getId());
-        questionMapper.createQuestion(question);
+        question.setCreator(Integer.valueOf(user.getAccountId()));
+        question.setId(questionId);
+        questionService.createOrUpdate(question);
+
         return "redirect:/";
     }
 }

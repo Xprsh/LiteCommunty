@@ -4,17 +4,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import top.youmunan.communty.Provider.GitHubProvider;
 import top.youmunan.communty.dto.AccessTokenDTO;
 import top.youmunan.communty.dto.GitHubUser;
 import top.youmunan.communty.mapper.UserMapper;
 import top.youmunan.communty.model.User;
+import top.youmunan.communty.model.UserExample;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 import java.util.UUID;
 
 @Controller
@@ -52,16 +53,20 @@ public class AuthorizeController {
         if (gitHubUser != null && gitHubUser.getLogin() != null) {
             User user = null;
             // 登录成功
-            if(userMapper.findByAccountId(gitHubUser.getId().intValue()).getName().equals(gitHubUser.getLogin())){
+            UserExample example = new UserExample();
+            example.createCriteria().andAccountIdEqualTo(String.valueOf(gitHubUser.getId()));
+            List<User> users = userMapper.selectByExample(example);
+            user = users.get(0);
+            if(user.getName().equals(gitHubUser.getLogin())){
                 // 已存在用户
                 // 更新信息
-                user = userMapper.findByAccountId(gitHubUser.getId().intValue());
+                user = users.get(0);
                 user.setToken(UUID.randomUUID().toString());
                 user.setName(gitHubUser.getLogin());
                 user.setAccountId(String.valueOf(gitHubUser.getId()));
                 user.setGmtModified(System.currentTimeMillis());
                 user.setAvatarUrl(gitHubUser.getAvatarUrl());
-                userMapper.updateUser(user);
+                userMapper.updateByPrimaryKey(user);
 
             }else {
                 user = new User();
