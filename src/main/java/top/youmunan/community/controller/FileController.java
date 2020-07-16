@@ -1,5 +1,6 @@
 package top.youmunan.community.controller;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.ResourceUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,6 +20,10 @@ import java.util.UUID;
 @Controller
 @ResponseBody
 public class FileController {
+
+    @Value("${realPath}")
+    public String realPath;
+
     @RequestMapping("/file/upload")
     @ResponseBody
     public FileDTO upload(HttpServletRequest request) {
@@ -33,7 +38,7 @@ public class FileController {
         }
 
         String fileName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
-        String savePath = "src/main/resources/static/images/userImg/";
+        String savePath = realPath;
         String visitPath = "/images/userImg/" + fileName;
 
 
