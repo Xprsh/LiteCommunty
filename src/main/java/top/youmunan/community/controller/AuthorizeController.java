@@ -56,19 +56,7 @@ public class AuthorizeController {
             UserExample example = new UserExample();
             example.createCriteria().andAccountIdEqualTo(String.valueOf(gitHubUser.getId()));
             List<User> users = userMapper.selectByExample(example);
-            user = users.get(0);
-            if(user.getName().equals(gitHubUser.getLogin())){
-                // 已存在用户
-                // 更新信息
-                user = users.get(0);
-                user.setToken(UUID.randomUUID().toString());
-                user.setName(gitHubUser.getLogin());
-                user.setAccountId(String.valueOf(gitHubUser.getId()));
-                user.setGmtModified(System.currentTimeMillis());
-                user.setAvatarUrl(gitHubUser.getAvatarUrl());
-                userMapper.updateByPrimaryKey(user);
-
-            }else {
+            if(users.size() == 0){
                 user = new User();
                 user.setToken(UUID.randomUUID().toString());
                 user.setName(gitHubUser.getLogin());
@@ -77,7 +65,24 @@ public class AuthorizeController {
                 user.setGmtModified(user.getGmtCreate());
                 user.setAvatarUrl(gitHubUser.getAvatarUrl());
                 userMapper.insertSelective(user);
+            }else {
+                user = users.get(0);
+                if(user.getName().equals(gitHubUser.getLogin())){
+                    // 已存在用户
+                    // 更新信息
+                    user = users.get(0);
+                    user.setToken(UUID.randomUUID().toString());
+                    user.setName(gitHubUser.getLogin());
+                    user.setAccountId(String.valueOf(gitHubUser.getId()));
+                    user.setGmtModified(System.currentTimeMillis());
+                    user.setAvatarUrl(gitHubUser.getAvatarUrl());
+                    userMapper.updateByPrimaryKey(user);
+
+                }
             }
+
+
+
 //            HttpSession session = request.getSession();
 //            session.setAttribute("user", gitHubUser);
             // 使用cookie
