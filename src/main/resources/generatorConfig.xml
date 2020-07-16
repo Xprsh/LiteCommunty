@@ -8,6 +8,8 @@
 
         <!--分页插件-->
         <plugin type="org.mybatis.generator.plugins.RowBoundsPlugin"></plugin>
+        <!--model toString()-->
+        <plugin type="org.mybatis.generator.plugins.ToStringPlugin" />
         
         <jdbcConnection driverClass="org.h2.Driver"
                         connectionURL="jdbc:h2:~/community"
@@ -19,7 +21,7 @@
             <property name="forceBigDecimals" value="false" />
         </javaTypeResolver>
 
-        <javaModelGenerator targetPackage="top.youmunan.communty.model" targetProject="src/main/java">
+        <javaModelGenerator targetPackage="top.youmunan.community.model" targetProject="src/main/java">
             <property name="enableSubPackages" value="true" />
             <property name="trimStrings" value="true" />
         </javaModelGenerator>
@@ -28,12 +30,13 @@
             <property name="enableSubPackages" value="true" />
         </sqlMapGenerator>
 
-        <javaClientGenerator type="XMLMAPPER" targetPackage="top.youmunan.communty.mapper"  targetProject="src/main/java">
+        <javaClientGenerator type="XMLMAPPER" targetPackage="top.youmunan.community.mapper" targetProject="src/main/java">
             <property name="enableSubPackages" value="true" />
         </javaClientGenerator>
 
         <table tableName="USER" domainObjectName="User" ></table>
         <table tableName="QUESTION" domainObjectName="Question"></table>
-
+        <table tableName="COMMENT" domainObjectName="Comment"></table>
+        <table tableName="NOTIFICATION" domainObjectName="Notification"></table>
     </context>
 </generatorConfiguration>
