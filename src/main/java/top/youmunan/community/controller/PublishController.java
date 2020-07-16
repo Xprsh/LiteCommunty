@@ -35,11 +35,12 @@ public class PublishController {
     public String edit(@PathVariable(name="id") Integer id, Model model) {
         System.out.println("开始测试rest");
         Question question = questionMapper.selectByPrimaryKey(id);
+        System.out.println("rest:"+question);
         model.addAttribute("title", question.getTitle());
         model.addAttribute("detail", question.getDetail());
         model.addAttribute("tags", question.getTags());
         model.addAttribute("questionId", question.getId());
-        return "/publish";
+        return "publish";
     }
 
     @PostMapping("/publish")
