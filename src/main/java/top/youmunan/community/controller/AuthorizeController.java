@@ -1,5 +1,6 @@
 package top.youmunan.community.controller;
 
+import ch.qos.logback.core.net.SyslogOutputStream;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -89,6 +90,13 @@ public class AuthorizeController {
             Cookie cookie = new Cookie("token", user.getToken());
             response.addCookie(cookie);
             System.out.println("userToken:"+user.getToken());
+
+            System.out.println("开始测试db");
+            UserExample example1 = new UserExample();
+            example1.createCriteria().andAccountIdEqualTo(user.getAccountId());
+            List<User> db = userMapper.selectByExample(example1);
+            System.out.println(db.get(0));
+
             return "redirect:/";
         } else {
             // 登陆失败
