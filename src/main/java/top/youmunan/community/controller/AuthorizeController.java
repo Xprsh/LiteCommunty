@@ -77,7 +77,6 @@ public class AuthorizeController {
                     user.setGmtModified(System.currentTimeMillis());
                     user.setAvatarUrl(gitHubUser.getAvatarUrl());
                     userMapper.updateByPrimaryKey(user);
-
                 }
             }
 
@@ -89,6 +88,7 @@ public class AuthorizeController {
             // 重定向，改变地址栏地址
             Cookie cookie = new Cookie("token", user.getToken());
             response.addCookie(cookie);
+            System.out.println("userToken:"+user.getToken());
             return "redirect:/";
         } else {
             // 登陆失败
