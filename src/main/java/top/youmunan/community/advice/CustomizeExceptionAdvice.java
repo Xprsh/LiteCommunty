@@ -2,13 +2,14 @@ package top.youmunan.community.advice;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.ModelAndView;
 import top.youmunan.community.exception.CustomizeException;
 
 import javax.servlet.http.HttpServletRequest;
 
-//@ControllerAdvice
+@ControllerAdvice
 public class CustomizeExceptionAdvice{
 
     @ExceptionHandler(Exception.class)
