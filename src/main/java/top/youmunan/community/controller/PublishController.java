@@ -33,6 +33,7 @@ public class PublishController {
 
     @GetMapping("/publish/{id}")
     public String edit(@PathVariable(name="id") Integer id, Model model) {
+        System.out.println("开始测试rest");
         Question question = questionMapper.selectByPrimaryKey(id);
         model.addAttribute("title", question.getTitle());
         model.addAttribute("detail", question.getDetail());
