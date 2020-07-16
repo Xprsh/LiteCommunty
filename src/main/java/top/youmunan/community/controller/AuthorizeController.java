@@ -88,9 +88,9 @@ public class AuthorizeController {
             // 使用cookie
             // 重定向，改变地址栏地址
             Cookie cookie = new Cookie("token", user.getToken());
-            Cookie cookie1 = new Cookie("id", "123456");
+            //不加会保存在callback中
+            cookie.setPath("/");
             response.addCookie(cookie);
-            response.addCookie(cookie1);
             System.out.println("userToken:"+user.getToken());
 
             System.out.println("开始测试db");
